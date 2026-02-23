@@ -32,18 +32,17 @@
 // export default nextConfig;
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // 1. Tells Next.js to build a static HTML version of your site
+  output: 'export',
+  
+  // 2. Disables server-side image optimization (required for static export)
   images: {
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'images.unsplash.com',
-      },
-      {
-        protocol: 'https',
-        hostname: 'placehold.co',
-      }
-    ],
+    unoptimized: true,
   },
+
+  // 3. IMPORTANT: If your GitHub repo is named "vreya", you MUST uncomment the line below 
+  // and replace 'your-repo-name' with your actual repository name!
+  basePath: '/Vreya', 
 };
 
 export default nextConfig;
