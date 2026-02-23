@@ -1,65 +1,153 @@
+"use client";
+
+import { getProductsInCollection } from "@/lib/shopify";
+import Link from "next/link";
 import Image from "next/image";
+import { motion } from "framer-motion";
+import { ShoppingBag, ChevronDown } from "lucide-react";
+import { useEffect, useState } from "react";
+import Navbar from "@/components/navbar"; // Adjust path/capitalization if needed
 
 export default function Home() {
+  const [products, setProducts] = useState<any[]>([]);
+
+  useEffect(() => {
+    async function fetchData() {
+      const data = await getProductsInCollection();
+      setProducts(data);
+    }
+    fetchData();
+  }, []);
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
+    <div className="bg-[#5D1224] w-full relative flex flex-col">
+      <Navbar isHome={true} />
+
+      {/* --- LAYER 1: HERO SECTION (Standard Flow, no longer fixed!) --- */}
+      <div className="relative w-full h-screen flex flex-col items-center justify-center overflow-hidden">
+        {/* Background Pattern */}
+        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] bg-repeat opacity-10 mix-blend-overlay"></div>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[50vw] h-[50vw] bg-[#D4AF37]/10 blur-[120px] rounded-full"></div>
+
+        {/* Hero Content */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1, ease: "easeOut" }}
+          className="relative z-10 flex flex-col items-center text-center px-4 max-w-5xl mx-auto pt-20"
+        >
+          <span className="text-[#D4AF37]/80 tracking-[0.4em] text-xs font-medium uppercase border-y border-[#D4AF37]/20 py-2 mb-8">
+            The Royal Collection
+          </span>
+
+          <h1 className="text-6xl md:text-8xl lg:text-9xl font-bold tracking-tight font-serif leading-none text-[#FDFBF7]">
+            Weave Your <br />
+            <span className="text-[#D4AF37] relative inline-block">
+              Legacy
+              {/* Changed to motion.span, removed w-full, added animation props */}
+              <motion.span
+                initial={{ width: "0%" }}
+                animate={{ width: "100%" }}
+                transition={{ duration: 1.2, delay: 0.8, ease: "easeInOut" }}
+                className="absolute bottom-2 left-0 h-2 bg-[#D4AF37]/50 -z-10"
+              />
+            </span>
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+
+          <p className="mt-8 text-lg md:text-xl text-[#FDFBF7]/60 font-light">
+            Authentic Handloom. Timeless Grace.
           </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+        </motion.div>
+
+        {/* --- NEW START SHOPPING BUTTON --- */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1, delay: 1 }}
+          className="mt-10 relative z-10"
+        >
+          <Link
+            href="/collection"
+            className="bg-[#D4AF37] text-[#5D1224] px-10 py-4 uppercase tracking-[0.2em] text-sm font-bold hover:bg-[#FDFBF7] transition-all duration-300 shadow-lg hover:shadow-xl"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+            Start Shopping
+          </Link>
+        </motion.div>
+
+        {/* Scroll Indicator */}
+        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 text-[#D4AF37]/50 flex flex-col items-center gap-2 z-10">
+          <ChevronDown className="animate-bounce" size={20} />
         </div>
-      </main>
+      </div>
+
+      {/* --- LAYER 2: SCROLLING CONTENT --- */}
+      {/* Removed the mt-[100vh] hack. Now it just sits naturally under the hero. */}
+      <div className="relative z-10 bg-[#FDFBF7] w-full shadow-[0_-10px_40px_rgba(0,0,0,0.3)]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-[#5D1224] font-serif">
+              Latest Arrivals
+            </h2>
+            <div className="w-16 h-1 bg-[#D4AF37] mt-4 mx-auto"></div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {products.map((item: any) => {
+              const product = item.node;
+              return (
+                <div
+                  key={product.id}
+                  className="group relative bg-white p-4 rounded-xl shadow-sm hover:shadow-xl transition-all duration-500"
+                >
+                  <div className="aspect-[4/5] overflow-hidden rounded-lg bg-gray-100 relative">
+                    <Link href={`/product/${product.handle}`}>
+                      <Image
+                        src={product.images.edges[0].node.url}
+                        alt={product.title}
+                        fill
+                        className="object-cover object-center group-hover:scale-105 transition-transform duration-700"
+                        sizes="(max-width: 768px) 100vw, 33vw"
+                      />
+                    </Link>
+                    <Link
+                      href={`/product/${product.handle}`}
+                      className="absolute bottom-3 right-3 bg-white/90 backdrop-blur-md text-[#5D1224] w-10 h-10 rounded-full flex items-center justify-center opacity-0 scale-75 group-hover:opacity-100 group-hover:scale-100 transition-all duration-300 shadow-lg z-10"
+                    >
+                      <ShoppingBag size={18} />
+                    </Link>
+                  </div>
+
+                  <div className="mt-4 flex justify-between items-start px-1">
+                    <div>
+                      <h3 className="text-lg font-serif font-medium text-gray-900 leading-tight group-hover:text-[#5D1224] transition-colors">
+                        {product.title}
+                      </h3>
+                      <p className="text-sm text-gray-500 mt-1">Pure Silk</p>
+                    </div>
+                    <div className="text-right pl-2">
+                      <p className="text-lg font-bold text-[#5D1224] whitespace-nowrap">
+                        ₹{product.priceRange.minVariantPrice.amount}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        <div className="py-12 bg-[#F5F2EA] border-t border-[#D4AF37]/10">
+          <div className="max-w-3xl mx-auto text-center px-6">
+            <h3 className="text-xl md:text-2xl font-serif text-[#5D1224] mb-4 leading-relaxed">
+              "The saree is the only garment that has been in fashion for over
+              2,000 years."
+            </h3>
+            <p className="text-[#5D1224]/50 italic text-sm">
+              - A Tribute to Indian Heritage
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
