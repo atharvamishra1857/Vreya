@@ -18,8 +18,7 @@ module.exports = {
       },
 
       fontFamily: {
-        serif: ["var(--font-serif)", "serif"], // Matches the variable name in layout.tsx
-        sans: ["var(--font-inter)", "sans-serif"],
+        brand: ["var(--font-brand)"], // Now font-brand will work perfectly!
       },
     },
   },

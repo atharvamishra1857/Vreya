@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import {
   Instagram,
   Facebook,
@@ -14,17 +15,23 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
         {/* --- MAIN FOOTER GRID --- */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8 mb-16">
-          {/* Column 1: Brand Info */}
-          <div className="flex flex-col gap-6 lg:pr-8">
-            <Link
-              href="/"
-              className="text-3xl font-serif font-bold tracking-[0.2em] hover:text-[#D4AF37] transition-colors w-fit"
-            >
-              VREYA
-            </Link>
-            <p className="text-sm font-light text-[#FDFBF7]/70 leading-relaxed">
-              Preserving the sacred art of Indian handloom. Every thread tells a
-              story of royalty, patience, and timeless devotion.
+          {/* Brand Column - Updated */}
+          <div className="space-y-6">
+            {/* Replace the old text title with your Logo Image */}
+            <div className="relative w-32 h-12">
+              {" "}
+              {/* Adjust width/height as needed */}
+              <Image
+                src="/logo.png"
+                alt="VREYA Logo"
+                fill
+                className="object-contain object-left"
+              />
+            </div>
+
+            {/* Replace the old paragraph with your new tagline */}
+            <p className="text-[#FDFBF7]/80 text-sm leading-relaxed max-w-xs">
+              Timeless Elegance in Every Thread.
             </p>
             <div className="flex items-center gap-5 mt-2">
               <a

@@ -6,9 +6,11 @@ import CartDrawer from "@/components/cartDrawer"; // Import Component
 import Footer from "@/components/footer";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
-const playfair = Playfair_Display({
+const brandFont = Playfair_Display({
   subsets: ["latin"],
-  variable: "--font-serif",
+  weight: ["400", "500", "600"], // Playfair looks great slightly bold!
+  variable: "--font-brand",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -26,7 +28,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body
         suppressHydrationWarning
-        className={`${inter.variable} ${playfair.variable} font-sans flex flex-col min-h-screen`}
+        className={`${inter.variable} ${brandFont.variable} font-sans flex flex-col min-h-screen`}
       >
         <CartProvider>
           <main className="flex-grow flex flex-col relative z-10 w-full">
