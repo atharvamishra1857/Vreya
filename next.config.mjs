@@ -30,17 +30,29 @@
 // };
 
 // export default nextConfig;
+// /** @type {import('next').NextConfig} */
+// const nextConfig = {
+//   // We removed the export and unoptimized image rules!
+//   images: {
+//     remotePatterns: [
+//       {
+//         protocol: 'https',
+//         hostname: 'images.unsplash.com',
+//       },
+//     ],
+//   },
+// };
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // We removed the export and unoptimized image rules!
   images: {
     remotePatterns: [
       {
-        protocol: 'https',
-        hostname: 'images.unsplash.com',
+        protocol: "https",
+        hostname: "images.unsplash.com",
       },
     ],
   },
 };
-
 export default nextConfig;
