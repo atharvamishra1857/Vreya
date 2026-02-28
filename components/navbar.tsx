@@ -51,7 +51,7 @@ export default function Navbar({ isHome = false }: { isHome?: boolean }) {
         <div className="flex items-center gap-2">
           <a href="/" className="group relative block drop-shadow-sm">
             <span
-              className={`text-2xl font-serif font-bold tracking-[0.2em] block transition-colors duration-500 group-hover:!text-[#D4AF37] ${textColorClass}`}
+              className={`text-2xl font-brand font-bold tracking-[0.2em] block transition-colors duration-500 group-hover:!text-[#D4AF37] ${textColorClass}`}
               style={{ WebkitTextStroke: "0px" }}
             >
               VREYA
