@@ -14,7 +14,7 @@ export default function Navbar({ isHome = false }: { isHome?: boolean }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false); // NEW: Mobile Menu State
 
   // --- CART CONTEXT ---
-  const { openCart } = useCart();
+  const { openCart, cartCount } = useCart();
 
   // --- SCROLL LISTENER ---
   useEffect(() => {
@@ -112,7 +112,7 @@ export default function Navbar({ isHome = false }: { isHome?: boolean }) {
             <User size={20} strokeWidth={1.5} />
           </Link>
 
-          {/* Cart Icon */}
+          {/* Cart Icon with Dynamic Badge */}
           <button
             suppressHydrationWarning
             className={`relative transition-colors duration-500 hover:!text-[#D4AF37] ${
@@ -121,6 +121,13 @@ export default function Navbar({ isHome = false }: { isHome?: boolean }) {
             onClick={openCart}
           >
             <ShoppingBag size={20} strokeWidth={1.5} />
+
+            {/* --- THE CART BADGE --- */}
+            {cartCount > 0 && (
+              <span className="absolute -top-2 -right-2 bg-[#D4AF37] text-[#5D1224] text-[10px] font-bold h-[18px] w-[18px] rounded-full flex items-center justify-center shadow-sm">
+                {cartCount}
+              </span>
+            )}
           </button>
 
           {/* Mobile Menu Hamburger Toggle */}

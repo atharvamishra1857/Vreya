@@ -1,45 +1,27 @@
 "use client";
 
-import { Fragment, useState } from "react";
+import { Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
-import { X, Minus, Plus, ShoppingBag, ArrowRight } from "lucide-react";
+import { X, Minus, Plus, ShoppingBag, Trash2 } from "lucide-react";
 import { useCart } from "@/context/cartcontext";
 import Image from "next/image";
-
-// --- MOCK DATA (Until we connect real backend) ---
-const MOCK_ITEMS = [
-  {
-    id: 1,
-    name: "Banarasi Silk Saree",
-    color: "Royal Maroon",
-    price: 4500,
-    quantity: 1,
-    image: "https://placehold.co/600x800/5D1224/FFF?text=Banarasi+Silk",
-  },
-  {
-    id: 2,
-    name: "Kanjivaram Gold",
-    color: "Deep Gold",
-    price: 8000,
-    quantity: 1,
-    image: "https://placehold.co/600x800/D4AF37/000?text=Kanjivaram",
-  },
-];
+import Link from "next/link";
 
 export default function CartDrawer() {
-  const { isOpen, closeCart } = useCart();
-  const [items, setItems] = useState(MOCK_ITEMS);
-
-  // Calculate Subtotal
-  const subtotal = items.reduce(
-    (total, item) => total + item.price * item.quantity,
-    0,
-  );
+  // Pulling our logic directly from the "Brain"
+  const {
+    isOpen,
+    closeCart,
+    cartItems,
+    updateQuantity,
+    removeFromCart,
+    cartTotal,
+  } = useCart();
 
   return (
     <Transition.Root show={isOpen} as={Fragment}>
-      <Dialog as="div" className="relative z-[60]" onClose={closeCart}>
-        {/* Dark Overlay */}
+      <Dialog as="div" className="relative z-[200]" onClose={closeCart}>
+        {/* Background Overlay */}
         <Transition.Child
           as={Fragment}
           enter="ease-in-out duration-500"
@@ -49,13 +31,13 @@ export default function CartDrawer() {
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-brand-maroon/40 backdrop-blur-sm transition-opacity" />
+          <div className="fixed inset-0 bg-[#5D1224]/40 backdrop-blur-sm transition-opacity" />
         </Transition.Child>
 
         <div className="fixed inset-0 overflow-hidden">
           <div className="absolute inset-0 overflow-hidden">
             <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
-              {/* The Drawer Panel */}
+              {/* Sliding Drawer */}
               <Transition.Child
                 as={Fragment}
                 enter="transform transition ease-in-out duration-500 sm:duration-700"
@@ -66,115 +48,147 @@ export default function CartDrawer() {
                 leaveTo="translate-x-full"
               >
                 <Dialog.Panel className="pointer-events-auto w-screen max-w-md">
-                  <div className="flex h-full flex-col bg-brand-cream shadow-2xl border-l border-brand-maroon/10">
-                    {/* --- HEADER --- */}
-                    <div className="flex items-center justify-between px-4 py-6 sm:px-6 bg-white">
-                      <Dialog.Title className="text-lg font-serif font-bold text-brand-maroon flex items-center gap-2">
-                        <ShoppingBag size={20} />
-                        Your Collection
+                  <div className="flex h-full flex-col bg-[#FDFBF7] shadow-2xl">
+                    {/* Header */}
+                    <div className="flex items-center justify-between px-6 py-6 border-b border-[#5D1224]/10">
+                      <Dialog.Title className="text-xl font-brand font-bold text-[#5D1224] tracking-widest">
+                        YOUR CART
                       </Dialog.Title>
                       <button
-                        type="button"
-                        className="relative -m-2 p-2 text-gray-400 hover:text-gray-500"
                         onClick={closeCart}
+                        className="text-[#5D1224]/60 hover:text-[#D4AF37] transition-colors"
                       >
                         <X size={24} />
                       </button>
                     </div>
 
-                    {/* --- ITEMS LIST --- */}
-                    <div className="flex-1 overflow-y-auto px-4 py-6 sm:px-6">
-                      <div className="flow-root">
-                        <ul
-                          role="list"
-                          className="-my-6 divide-y divide-gray-200"
-                        >
-                          {items.map((product) => (
-                            <li key={product.id} className="flex py-6">
-                              {/* Image */}
-                              <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
-                                <img
-                                  src={product.image}
-                                  alt={product.name}
-                                  className="h-full w-full object-cover object-center"
+                    {/* Cart Items Mapping */}
+                    <div className="flex-1 overflow-y-auto px-6 py-8">
+                      {cartItems.length === 0 ? (
+                        <div className="flex flex-col items-center justify-center h-full text-[#5D1224]/40 space-y-4">
+                          <ShoppingBag size={48} strokeWidth={1} />
+                          <p className="tracking-widest text-sm uppercase">
+                            Your cart is empty
+                          </p>
+                        </div>
+                      ) : (
+                        <ul className="space-y-8">
+                          {cartItems.map((item) => (
+                            <li key={item.id} className="flex py-2">
+                              {/* Product Image */}
+                              <div className="relative h-28 w-24 flex-shrink-0 overflow-hidden rounded-md border border-[#5D1224]/10">
+                                <Image
+                                  src={item.image}
+                                  alt={item.title}
+                                  fill
+                                  className="object-cover object-center"
                                 />
                               </div>
 
-                              {/* Details */}
+                              {/* Product Details & Controls */}
                               <div className="ml-4 flex flex-1 flex-col">
                                 <div>
-                                  <div className="flex justify-between text-base font-medium text-gray-900">
-                                    <h3>{product.name}</h3>
-                                    <p className="ml-4 font-bold text-brand-maroon">
-                                      ₹{product.price}
+                                  <div className="flex justify-between text-base font-medium text-[#5D1224]">
+                                    <h3 className="font-serif">
+                                      <Link
+                                        href={`/product/${item.handle}`}
+                                        onClick={closeCart}
+                                      >
+                                        {item.title}
+                                      </Link>
+                                    </h3>
+                                    <p className="ml-4">
+                                      ₹
+                                      {(
+                                        item.price * item.quantity
+                                      ).toLocaleString()}
                                     </p>
                                   </div>
-                                  <p className="mt-1 text-sm text-gray-500">
-                                    {product.color}
-                                  </p>
                                 </div>
+
                                 <div className="flex flex-1 items-end justify-between text-sm">
-                                  {/* Quantity Controls */}
-                                  <div className="flex items-center border border-gray-300 rounded-md">
-                                    <button className="px-2 py-1 text-gray-600 hover:bg-gray-100">
-                                      -
+                                  {/* --- THE LOGIC CONTROLS --- */}
+                                  <div className="flex items-center border border-[#5D1224]/20 rounded-sm">
+                                    <button
+                                      onClick={() =>
+                                        updateQuantity(item.id, -1)
+                                      }
+                                      className="p-1 px-2 text-[#5D1224]/60 hover:text-[#D4AF37] transition-colors"
+                                    >
+                                      <Minus size={14} />
                                     </button>
-                                    <span className="px-2 font-medium">
-                                      {product.quantity}
+                                    <span className="px-3 py-1 font-medium text-[#5D1224]">
+                                      {item.quantity}
                                     </span>
-                                    <button className="px-2 py-1 text-gray-600 hover:bg-gray-100">
-                                      +
+                                    <button
+                                      onClick={() => updateQuantity(item.id, 1)}
+                                      className="p-1 px-2 text-[#5D1224]/60 hover:text-[#D4AF37] transition-colors"
+                                    >
+                                      <Plus size={14} />
                                     </button>
                                   </div>
 
                                   <button
                                     type="button"
-                                    className="font-medium text-brand-maroon hover:text-red-800"
+                                    onClick={() => removeFromCart(item.id)}
+                                    className="font-medium text-[#5D1224]/50 hover:text-[#D4AF37] transition-colors flex items-center gap-1"
                                   >
-                                    Remove
+                                    <Trash2 size={16} />
                                   </button>
                                 </div>
                               </div>
                             </li>
                           ))}
                         </ul>
-                      </div>
+                      )}
                     </div>
 
-                    {/* --- FOOTER --- */}
-                    <div className="border-t border-gray-200 px-4 py-6 sm:px-6 bg-white">
-                      <div className="flex justify-between text-base font-medium text-gray-900 mb-4">
-                        <p>Subtotal</p>
-                        <p className="text-xl font-bold text-brand-maroon">
-                          ₹{subtotal}
-                        </p>
+                    {/* Footer / Price Distribution */}
+                    {cartItems.length > 0 && (
+                      <div className="border-t border-[#5D1224]/10 px-6 py-6 bg-white space-y-6">
+                        {/* Breakdown */}
+                        <div className="space-y-3 text-sm text-[#5D1224]/70">
+                          <div className="flex justify-between">
+                            <p>Subtotal</p>
+                            <p className="font-medium text-[#5D1224]">
+                              ₹{cartTotal.toLocaleString()}
+                            </p>
+                          </div>
+                          <div className="flex justify-between">
+                            <p>Shipping</p>
+                            <p className="text-[#D4AF37] text-xs uppercase tracking-wider mt-0.5">
+                              Calculated at checkout
+                            </p>
+                          </div>
+                          <div className="flex justify-between">
+                            <p>Taxes</p>
+                            <p className="text-[#D4AF37] text-xs uppercase tracking-wider mt-0.5">
+                              Calculated at checkout
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Total */}
+                        <div className="flex justify-between items-end pt-4 border-t border-[#5D1224]/10">
+                          <div>
+                            <p className="text-xl font-bold text-[#5D1224] font-serif">
+                              Total
+                            </p>
+                            <p className="text-xs text-[#5D1224]/50 mt-1">
+                              INR (inclusive of all taxes)
+                            </p>
+                          </div>
+                          <p className="text-2xl font-bold text-[#5D1224]">
+                            ₹{cartTotal.toLocaleString()}
+                          </p>
+                        </div>
+
+                        {/* Checkout Button */}
+                        <button className="w-full bg-[#5D1224] text-[#FDFBF7] py-4 uppercase tracking-[0.2em] text-sm font-bold hover:bg-[#D4AF37] hover:text-[#5D1224] transition-all duration-300 shadow-lg mt-4">
+                          Checkout securely
+                        </button>
                       </div>
-                      <p className="mt-0.5 text-sm text-gray-500 mb-6">
-                        Shipping and taxes calculated at checkout.
-                      </p>
-                      <div className="mt-6">
-                        <a
-                          href="#"
-                          className="flex items-center justify-center rounded-md border border-transparent bg-brand-maroon px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-brand-maroon/90 transition-all group"
-                        >
-                          Proceed to Checkout
-                          <ArrowRight className="ml-2 w-4 h-4 transition-transform group-hover:translate-x-1" />
-                        </a>
-                      </div>
-                      <div className="mt-6 flex justify-center text-center text-sm text-gray-500">
-                        <p>
-                          or{" "}
-                          <button
-                            type="button"
-                            className="font-medium text-brand-maroon hover:text-brand-gold"
-                            onClick={closeCart}
-                          >
-                            Continue Shopping
-                            <span aria-hidden="true"> &rarr;</span>
-                          </button>
-                        </p>
-                      </div>
-                    </div>
+                    )}
                   </div>
                 </Dialog.Panel>
               </Transition.Child>

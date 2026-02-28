@@ -14,6 +14,7 @@ import {
   Check,
 } from "lucide-react";
 import Navbar from "@/components/navbar";
+import { useCart } from "@/context/cartcontext";
 
 // Example array of product images
 const PRODUCT_IMAGES = [
@@ -29,25 +30,36 @@ export default function ProductPage() {
     "idle",
   );
 
+  // --- PULL IN THE CART BRAIN ---
+  const { addToCart } = useCart();
+
   // --- AUTO CAROUSEL ---
   useEffect(() => {
     const timer = setInterval(() => {
       setActiveIndex((prev) => (prev + 1) % PRODUCT_IMAGES.length);
-    }, 5000); // Automatically rotates every 5 seconds
-
-    return () => clearInterval(timer); // Cleanup to prevent memory leaks
+    }, 5000);
+    return () => clearInterval(timer);
   }, []);
 
   // --- ADD TO CART HANDLER ---
   const handleAddToCart = () => {
-    if (cartState !== "idle") return; // Prevent double-clicking
+    if (cartState !== "idle") return;
 
     setCartState("adding");
 
-    // Simulate a network request (e.g., waiting for Shopify API)
-    setTimeout(() => setCartState("success"), 1200);
+    // 1. ACTUALLY ADD IT TO THE GLOBAL CART
+    // Note: You will need to replace these dummy values with whatever
+    // variables you are actually using on this page for the product!
+    addToCart({
+      id: "dummy-saree-1", // Needs to be a unique ID string
+      title: "Royal Handloom Saree", // The product name
+      price: 15000, // The price as a pure number
+      image: PRODUCT_IMAGES[0], // Grab the first image from your array
+      handle: "royal-handloom-saree", // The URL slug
+    });
 
-    // Reset back to idle after a few seconds
+    // 2. Keep your awesome UI state transitions!
+    setTimeout(() => setCartState("success"), 1200);
     setTimeout(() => setCartState("idle"), 4000);
   };
 
