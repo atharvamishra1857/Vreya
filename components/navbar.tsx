@@ -10,7 +10,8 @@ export default function Navbar({ isHome = false }: { isHome?: boolean }) {
   // --- STATES ---
   const [isScrolled, setIsScrolled] = useState(false);
   const [isPastHero, setIsPastHero] = useState(false);
-  const [isSearchOpen, setIsSearchOpen] = useState(false); // Controls Search Overlay
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false); // NEW: Mobile Menu State
 
   // --- CART CONTEXT ---
   const { openCart } = useCart();
@@ -27,14 +28,14 @@ export default function Navbar({ isHome = false }: { isHome?: boolean }) {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // --- DISABLE BODY SCROLL WHEN SEARCH IS OPEN ---
+  // --- DISABLE BODY SCROLL WHEN OVERLAYS ARE OPEN ---
   useEffect(() => {
-    if (isSearchOpen) {
+    if (isSearchOpen || isMobileMenuOpen) {
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "unset";
     }
-  }, [isSearchOpen]);
+  }, [isSearchOpen, isMobileMenuOpen]);
 
   // --- COLOR ENGINE ---
   const textColorClass =
@@ -48,10 +49,12 @@ export default function Navbar({ isHome = false }: { isHome?: boolean }) {
         }`}
       >
         {/* --- LEFT: LOGO --- */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 z-[110]">
           <a href="/" className="group relative block drop-shadow-sm">
             <span
-              className={`text-2xl font-brand font-bold tracking-[0.2em] block transition-colors duration-500 group-hover:!text-[#D4AF37] ${textColorClass}`}
+              className={`text-2xl font-brand font-bold tracking-[0.2em] block transition-colors duration-500 group-hover:!text-[#D4AF37] ${
+                isMobileMenuOpen ? "text-[#FDFBF7]" : textColorClass
+              }`}
               style={{ WebkitTextStroke: "0px" }}
             >
               VREYA
@@ -90,8 +93,8 @@ export default function Navbar({ isHome = false }: { isHome?: boolean }) {
         </div>
 
         {/* --- RIGHT: ICONS --- */}
-        <div className="flex items-center gap-8 drop-shadow-sm">
-          {/* Search Icon (Opens Overlay) */}
+        <div className="flex items-center gap-6 md:gap-8 drop-shadow-sm z-[110]">
+          {/* Search Icon */}
           <button
             onClick={() => setIsSearchOpen(true)}
             suppressHydrationWarning
@@ -112,23 +115,99 @@ export default function Navbar({ isHome = false }: { isHome?: boolean }) {
           {/* Cart Icon */}
           <button
             suppressHydrationWarning
-            className={`relative transition-colors duration-500 hover:!text-[#D4AF37] ${textColorClass}`}
+            className={`relative transition-colors duration-500 hover:!text-[#D4AF37] ${
+              isMobileMenuOpen ? "text-[#FDFBF7]" : textColorClass
+            }`}
             onClick={openCart}
           >
             <ShoppingBag size={20} strokeWidth={1.5} />
           </button>
 
-          {/* Mobile Menu Hamburger */}
+          {/* Mobile Menu Hamburger Toggle */}
           <button
             suppressHydrationWarning
-            className={`md:hidden transition-colors duration-500 hover:!text-[#D4AF37] ${textColorClass}`}
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className={`md:hidden transition-colors duration-500 hover:!text-[#D4AF37] ${
+              isMobileMenuOpen ? "text-[#FDFBF7]" : textColorClass
+            }`}
           >
-            <Menu size={24} strokeWidth={1.5} />
+            {isMobileMenuOpen ? (
+              <X size={28} strokeWidth={1.5} />
+            ) : (
+              <Menu size={28} strokeWidth={1.5} />
+            )}
           </button>
         </div>
       </nav>
 
-      {/* --- FULL SCREEN SEARCH OVERLAY --- */}
+      {/* --- NEW: MOBILE MENU OVERLAY --- */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: "-100%" }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: "-100%" }}
+            transition={{ duration: 0.5, ease: "easeInOut" }}
+            className="fixed inset-0 z-[90] bg-[#5D1224] flex flex-col pt-32 px-8"
+          >
+            <div className="flex flex-col gap-8">
+              {["Home", "Collection", "Our Story", "Support"].map((item, i) => (
+                <motion.div
+                  key={item}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.2 + i * 0.1, duration: 0.4 }}
+                >
+                  <Link
+                    href={
+                      item === "Home"
+                        ? "/"
+                        : item === "Our Story"
+                          ? "/our-story"
+                          : item === "Collection"
+                            ? "/collection"
+                            : item === "Support"
+                              ? "/support"
+                              : "#"
+                    }
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="text-3xl font-brand tracking-widest text-[#FDFBF7] hover:text-[#D4AF37] transition-colors border-b border-[#FDFBF7]/10 pb-4 block"
+                  >
+                    {item}
+                  </Link>
+                </motion.div>
+              ))}
+            </div>
+
+            {/* Mobile Search/Account Links */}
+            <div className="mt-auto pb-12 flex gap-8">
+              <button
+                onClick={() => {
+                  setIsMobileMenuOpen(false);
+                  setIsSearchOpen(true);
+                }}
+                className="flex items-center gap-2 text-[#FDFBF7]/80 hover:text-[#D4AF37]"
+              >
+                <Search size={20} />
+                <span className="uppercase tracking-widest text-sm">
+                  Search
+                </span>
+              </button>
+              <Link
+                href="/account"
+                className="flex items-center gap-2 text-[#FDFBF7]/80 hover:text-[#D4AF37]"
+              >
+                <User size={20} />
+                <span className="uppercase tracking-widest text-sm">
+                  Account
+                </span>
+              </Link>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* --- FULL SCREEN SEARCH OVERLAY (UNCHANGED) --- */}
       <AnimatePresence>
         {isSearchOpen && (
           <motion.div

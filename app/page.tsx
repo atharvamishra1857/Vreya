@@ -6,7 +6,7 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import { ShoppingBag, ChevronDown } from "lucide-react";
 import { useEffect, useState } from "react";
-import Navbar from "@/components/navbar"; // Adjust path/capitalization if needed
+import Navbar from "@/components/navbar";
 
 export default function Home() {
   const [products, setProducts] = useState<any[]>([]);
@@ -23,7 +23,7 @@ export default function Home() {
     <div className="bg-[#5D1224] w-full relative flex flex-col">
       <Navbar isHome={true} />
 
-      {/* --- LAYER 1: HERO SECTION (Standard Flow, no longer fixed!) --- */}
+      {/* --- LAYER 1: HERO SECTION --- */}
       <div className="relative w-full h-screen flex flex-col items-center justify-center overflow-hidden">
         {/* Background Pattern */}
         <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] bg-repeat opacity-10 mix-blend-overlay"></div>
@@ -36,20 +36,23 @@ export default function Home() {
           transition={{ duration: 1, ease: "easeOut" }}
           className="relative z-10 flex flex-col items-center text-center px-4 max-w-5xl mx-auto pt-20"
         >
-          <span className="text-[#D4AF37]/80 tracking-[0.4em] text-xs font-medium uppercase border-y border-[#D4AF37]/20 py-2 mb-8">
+          <p className="text-xs md:text-sm tracking-[0.3em] text-[#D4AF37] uppercase flex items-center justify-center gap-4">
+            <span className="w-8 md:w-16 h-[1px] bg-[#D4AF37]/50"></span>
             The Royal Collection
-          </span>
+            <span className="w-8 md:w-16 h-[1px] bg-[#D4AF37]/50"></span>
+          </p>
 
-          <h1 className="text-6xl md:text-8xl lg:text-9xl font-bold tracking-tight font-serif leading-none text-[#FDFBF7]">
-            Weave Your <br />
-            <span className="text-[#D4AF37] relative inline-block">
+          <h1 className="text-5xl md:text-7xl lg:text-8xl font-brand font-bold leading-tight mt-6 z-10">
+            Weave Your <br className="md:hidden" />
+            <br />
+            <span className="relative inline-block text-[#D4AF37]">
               Legacy
-              {/* Changed to motion.span, removed w-full, added animation props */}
+              {/* --- THE ANIMATED HIGHLIGHT --- */}
               <motion.span
-                initial={{ width: "0%" }}
+                initial={{ width: 0 }}
                 animate={{ width: "100%" }}
-                transition={{ duration: 1.2, delay: 0.8, ease: "easeInOut" }}
-                className="absolute bottom-2 left-0 h-2 bg-[#D4AF37]/50 -z-10"
+                transition={{ delay: 0.8, duration: 0.8, ease: "easeInOut" }}
+                className="absolute bottom-[4%] left-0 h-[12%] bg-[#D4AF37]/30 -z-10"
               />
             </span>
           </h1>
@@ -59,7 +62,7 @@ export default function Home() {
           </p>
         </motion.div>
 
-        {/* --- NEW START SHOPPING BUTTON --- */}
+        {/* --- START SHOPPING BUTTON --- */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -81,7 +84,6 @@ export default function Home() {
       </div>
 
       {/* --- LAYER 2: SCROLLING CONTENT --- */}
-      {/* Removed the mt-[100vh] hack. Now it just sits naturally under the hero. */}
       <div className="relative z-10 bg-[#FDFBF7] w-full shadow-[0_-10px_40px_rgba(0,0,0,0.3)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <div className="text-center mb-12">
@@ -139,8 +141,8 @@ export default function Home() {
         <div className="py-12 bg-[#F5F2EA] border-t border-[#D4AF37]/10">
           <div className="max-w-3xl mx-auto text-center px-6">
             <h3 className="text-xl md:text-2xl font-serif text-[#5D1224] mb-4 leading-relaxed">
-              "The saree is the only garment that has been in fashion for over
-              2,000 years."
+              &quot;The saree is the only garment that has been in fashion for
+              over 2,000 years.&quot;
             </h3>
             <p className="text-[#5D1224]/50 italic text-sm">
               - A Tribute to Indian Heritage
